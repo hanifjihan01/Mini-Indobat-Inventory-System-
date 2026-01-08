@@ -1,0 +1,27 @@
+# Obat CRUD Project
+
+Endpoint API:  
+- Membuat order: POST http://localhost:8080/orders  
+  Body JSON: {"product_id": 2, "quantity": 1, "discount_percent": 10}  
+- Menambahkan produk: POST http://localhost:8080/products  
+  Body JSON: {"name": "mefenamat", "stock": 1, "price": 5000}  
+- Mendapatkan daftar produk: GET http://localhost:8080/products  
+
+Menjalankan backend: 
+masuk folder obat_crud lalu ke backend dengan `cd backend`, install dependency dengan `go mod tidy`, kemudian jalankan server dengan `go run main.go`. Backend akan berjalan di http://localhost:8080  
+
+Menjalankan frontend: 
+masuk folder obat_crud lalu ke frontend dengan `cd frontend`, install dependency dengan `npm install`, kemudian jalankan development server dengan `npm run dev`. Frontend biasanya berjalan di http://localhost:3000  
+
+Menjalankan unit test backend:
+masuk folder obat_crud lalu ke backend dengan `cd backend`, masuk folder service dengan `cd services`, kemudian jalankan perintah `go test -v`  
+
+Test race condition:
+masuk folder obat_crud lalu ke backend dengan `cd backend`, jalankan perintah `hey -o csv -n 10 -c 10 -m POST -H "Content-Type: application/json" -d '{"product_id":3,"quantity":1,"discount_percent":0}' http://localhost:8080/orders` untuk mengirim 10 request secara bersamaan  
+
+Konfigurasi database: 
+buat file `.env` di folder backend dengan isi DB_HOST=localhost, DB_PORT=5432, DB_USER=postgres, DB_PASSWORD=narzia123, DB_NAME=db_obat, DB_SSLMODE=disable  
+
+Catatan: pastikan PostgreSQL sudah berjalan sebelum menjalankan backend. Gunakan port default: backend 8080, frontend 3000. Gunakan tool [hey](https://github.com/rakyll/hey) untuk testing race condition.
+
+untuk file sql tinggal di import saja ke dbeaver
