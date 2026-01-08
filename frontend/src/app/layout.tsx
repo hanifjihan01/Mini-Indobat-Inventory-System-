@@ -2,7 +2,7 @@ import "@/css/satoshi.css";
 import "@/css/style.css";
 
 import { Sidebar } from "@/components/Layouts/sidebar";
-
+import { Toaster } from "react-hot-toast";
 import "flatpickr/dist/flatpickr.min.css";
 import "jsvectormap/dist/jsvectormap.css";
 
@@ -26,6 +26,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <html lang="en" suppressHydrationWarning>
       <body>
         <Providers>
+        <Toaster position="top-right" />
           <NextTopLoader color="#5750F1" showSpinner={false} />
 
           <div className="flex min-h-screen">

@@ -12,9 +12,10 @@ type Product = {
 type AddOrderModalProps = {
   onClose: () => void;
   onSuccess: (message: string) => void;
+  onError: (message: string) => void;
 };
 
-export default function AddOrderModal({ onClose, onSuccess }: AddOrderModalProps) {
+export default function AddOrderModal({ onClose, onSuccess,onError }: AddOrderModalProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -27,20 +28,26 @@ export default function AddOrderModal({ onClose, onSuccess }: AddOrderModalProps
     fetch("http://localhost:8080/products")
       .then(res => res.json())
       .then(data => {
-        // Pastikan data array
         const productsArray = Array.isArray(data) ? data : data.data;
-        if (!Array.isArray(productsArray)) {
-          toast.error("Format data produk salah");
-          return;
+  
+        const mappedProducts = productsArray.map((p: any) => ({
+          id: p.ID,          // 🔥 FIX
+          name: p.name,
+          price: p.price,
+          stock: p.stock,
+        }));
+  
+        setProducts(mappedProducts);
+        if (mappedProducts.length > 0) {
+          setSelectedProductId(mappedProducts[0].id);
         }
-        setProducts(productsArray);
-        if (productsArray.length > 0) setSelectedProductId(productsArray[0].id);
       })
       .catch(err => {
         console.error(err);
-        toast.error("Gagal load data produk");
+        onError("Gagal load data produk");
       });
   }, []);
+  
 
   // Update estimasi harga real-time
   useEffect(() => {
@@ -51,9 +58,9 @@ export default function AddOrderModal({ onClose, onSuccess }: AddOrderModalProps
   }, [selectedProductId, quantity, discount, products]);
 
   const handleSubmit = async () => {
-    if (!selectedProductId) return toast.error("Pilih produk dulu");
-    if (quantity <= 0) return toast.error("Qty harus lebih dari 0");
-    if (discount < 0 || discount > 100) return toast.error("Diskon harus antara 0-100%");
+    if (!selectedProductId) return onError("Pilih produk dulu");
+    if (quantity <= 0) return onError("Qty harus lebih dari 0");
+    if (discount < 0 || discount > 100) return onError("Diskon harus antara 0-100%");
 
     setLoading(true);
     try {
@@ -76,7 +83,7 @@ export default function AddOrderModal({ onClose, onSuccess }: AddOrderModalProps
       setSelectedProductId(products.length > 0 ? products[0].id : null);
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Terjadi kesalahan");
+      onError(err.message || "Terjadi kesalahan");
     } finally {
       setLoading(false);
     }
