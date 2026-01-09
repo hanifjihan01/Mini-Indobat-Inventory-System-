@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-
+import { useRouter } from "next/navigation";
 type Product = {
   id: number;
   name: string;
@@ -15,7 +14,12 @@ type AddOrderModalProps = {
   onError: (message: string) => void;
 };
 
-export default function AddOrderModal({ onClose, onSuccess,onError }: AddOrderModalProps) {
+export default function AddOrderModal({
+  onClose,
+  onSuccess,
+  onError,
+}: AddOrderModalProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -23,46 +27,46 @@ export default function AddOrderModal({ onClose, onSuccess,onError }: AddOrderMo
   const [estimasiHarga, setEstimasiHarga] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // Fetch products dari API
+  // Fetch products
   useEffect(() => {
     fetch("http://localhost:8080/products")
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         const productsArray = Array.isArray(data) ? data : data.data;
-  
-        const mappedProducts = productsArray.map((p: any) => ({
-          id: p.ID,          // 🔥 FIX
+
+        const mapped = productsArray.map((p: any) => ({
+          id: p.ID,
           name: p.name,
           price: p.price,
-          stock: p.stock,
         }));
-  
-        setProducts(mappedProducts);
-        if (mappedProducts.length > 0) {
-          setSelectedProductId(mappedProducts[0].id);
+
+        setProducts(mapped);
+        if (mapped.length > 0) {
+          setSelectedProductId(mapped[0].id);
         }
       })
-      .catch(err => {
-        console.error(err);
-        onError("Gagal load data produk");
-      });
+      .catch(() => onError("Gagal load data produk"));
   }, []);
-  
 
-  // Update estimasi harga real-time
+  // Estimasi harga
   useEffect(() => {
-    const product = products.find(p => p.id === selectedProductId);
+    const product = products.find((p) => p.id === selectedProductId);
     if (!product) return;
+
     const total = product.price * quantity * (1 - discount / 100);
     setEstimasiHarga(total);
   }, [selectedProductId, quantity, discount, products]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!selectedProductId) return onError("Pilih produk dulu");
     if (quantity <= 0) return onError("Qty harus lebih dari 0");
-    if (discount < 0 || discount > 100) return onError("Diskon harus antara 0-100%");
+    if (discount < 0 || discount > 100)
+      return onError("Diskon harus antara 0–100%");
 
     setLoading(true);
+
     try {
       const res = await fetch("http://localhost:8080/orders", {
         method: "POST",
@@ -77,12 +81,12 @@ export default function AddOrderModal({ onClose, onSuccess,onError }: AddOrderMo
       if (!res.ok) throw new Error("Gagal menambah order");
 
       onSuccess("Order berhasil ditambahkan!");
-      // reset form
+      window.dispatchEvent(new Event("products-updated"));
+      router.refresh();
+      onClose();
       setQuantity(1);
       setDiscount(0);
-      setSelectedProductId(products.length > 0 ? products[0].id : null);
     } catch (err: any) {
-      console.error(err);
       onError(err.message || "Terjadi kesalahan");
     } finally {
       setLoading(false);
@@ -90,67 +94,77 @@ export default function AddOrderModal({ onClose, onSuccess,onError }: AddOrderMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
-        <h2 className="mb-4 text-lg font-semibold">Tambah Order</h2>
-
-        {/* Produk Dropdown */}
-        <label className="block mb-2 font-medium">Pilih Obat</label>
-        <select
-          className="mb-4 w-full rounded border px-3 py-2"
-          value={selectedProductId ?? ""}
-          onChange={e => setSelectedProductId(Number(e.target.value))}
-        >
-          {products.map(product => (
-            <option key={product.id} value={product.id}>
-              {product.name} - Rp {product.price.toLocaleString()}
-            </option>
-          ))}
-        </select>
-
-        {/* Quantity */}
-        <label className="block mb-2 font-medium">Qty</label>
-        <input
-          type="number"
-          min={1}
-          className="mb-4 w-full rounded border px-3 py-2"
-          value={quantity}
-          onChange={e => setQuantity(Number(e.target.value))}
-        />
-
-        {/* Discount */}
-        <label className="block mb-2 font-medium">Diskon (%)</label>
-        <input
-          type="number"
-          min={0}
-          max={100}
-          className="mb-4 w-full rounded border px-3 py-2"
-          value={discount}
-          onChange={e => setDiscount(Number(e.target.value))}
-        />
-
-        {/* Estimasi Harga */}
-        <div className="mb-4 text-right font-semibold">
-          Estimasi Harga: Rp {estimasiHarga.toLocaleString()}
-        </div>
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-2">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-md rounded-xl dark:bg-blue/20 p-6 shadow-lg bg-white">
+        {/* Header */}
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-semibold dark:text-white text-black">Tambah Order</h3>
           <button
-            className="rounded-xl border px-4 py-2 text-sm hover:bg-gray-100"
             onClick={onClose}
-            disabled={loading}
+            className="text-black/80 dark:text-white hover:text-black/50 text-xl font-bold"
           >
-            Batal
-          </button>
-          <button
-            className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Submit"}
+            ✕
           </button>
         </div>
+
+        <form className="space-y-3" onSubmit={handleSubmit}>
+          {/* Produk */}
+          <div>
+            <label className="block text-sm font-medium dark:text-white text-black">Pilih Obat</label>
+            <select
+              className="mt-1 w-full rounded-md border p-2 dark:bg-white text-black/90"
+              value={selectedProductId ?? ""}
+              onChange={(e) => setSelectedProductId(Number(e.target.value))}
+            >
+              {products.map((product) => (
+                <option key={product.id} value={product.id}>
+                  {product.name} - Rp {product.price.toLocaleString()}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Qty */}
+          <div>
+            <label className="block text-sm font-medium dark:text-white text-black">Qty</label>
+            <input
+              type="number"
+              min={1}
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="mt-1 w-full rounded-md border p-2 dark:bg-white text-black/90"
+            />
+          </div>
+
+          {/* Diskon */}
+          <div>
+            <label className="block text-sm font-medium dark:text-white text-black">Diskon (%)</label>
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={discount}
+              onChange={(e) => setDiscount(Number(e.target.value))}
+              className="t-1 w-full rounded-md border p-2 dark:bg-white text-black/90"
+            />
+          </div>
+
+          {/* Estimasi */}
+          <div className="block text-sm font-medium dark:text-white text-black">
+            Estimasi Harga: Rp {estimasiHarga.toLocaleString()}
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-primary p-2 text-black/80 dark:text-white 
+             font-bold tracking-wide hover:bg-primary-dark 
+             disabled:opacity-60"
+          >
+            {loading ? "Menyimpan..." : "Simpan Order"}
+          </button>
+        </form>
       </div>
     </div>
   );

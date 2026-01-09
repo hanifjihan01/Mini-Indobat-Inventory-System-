@@ -14,3 +14,16 @@ export async function getOverviewData() {
     products: { value: totalProducts },
   };
 }
+
+export async function deleteProduct(id: number) {
+  const res = await fetch(`http://localhost:8080/products/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Failed to delete product");
+  }
+
+  return res.json();
+}

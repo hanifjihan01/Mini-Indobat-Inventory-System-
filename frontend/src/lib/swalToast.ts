@@ -14,7 +14,7 @@ export const Toast = Swal.mixin({
   },
 });
 
-/* ===== Helper Functions ===== */
+/* ===== Toast Helpers ===== */
 
 export const toastSuccess = (message: string) => {
   Toast.fire({
@@ -42,4 +42,35 @@ export const toastInfo = (message: string) => {
     icon: "info",
     title: message,
   });
+};
+
+/* ===== Delete Confirmation ===== */
+
+export const confirmDelete = async (
+  onConfirm: () => Promise<void> | void,
+  options?: {
+    title?: string;
+    text?: string;
+    successMessage?: string;
+  }
+) => {
+  const result = await Swal.fire({
+    title: options?.title ?? "Are you sure?",
+    text: options?.text ?? "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
+    await onConfirm();
+
+    Swal.fire({
+      title: "Deleted!",
+      text: options?.successMessage ?? "Your data has been deleted.",
+      icon: "success",
+    });
+  }
 };

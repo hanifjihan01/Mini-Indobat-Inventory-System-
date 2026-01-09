@@ -16,8 +16,21 @@ export default function WeeksProfit({ className, timeFrame }: PropsType) {
   const [products, setProducts] = useState<ProductType[]>([]);
 
   useEffect(() => {
-    getProducts().then(setProducts);
+    const fetchProducts = () => {
+      getProducts().then(setProducts);
+    };
+  
+    fetchProducts(); // initial load
+  
+    const handleUpdate = () => fetchProducts();
+  
+    window.addEventListener("products-updated", handleUpdate);
+  
+    return () => {
+      window.removeEventListener("products-updated", handleUpdate);
+    };
   }, []);
+  
 
   const chartData = {
     stock: products.map(p => ({ x: p.name, y: p.stock })),
