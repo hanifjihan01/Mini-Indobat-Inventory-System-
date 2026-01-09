@@ -38,7 +38,7 @@ export default function ProductsTableClient({ data, className }: Props) {
     <>
       <div
         className={cn(
-          "grid rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-1",
+          "grid rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-1 dark:bg-gray-dark ",
           className
         )}
       >
@@ -73,12 +73,12 @@ export default function ProductsTableClient({ data, className }: Props) {
                 <TableCell>
                   <div className="flex justify-center gap-2">
                     {/* EDIT */}
-                    <button
+                    {/* <button
                       onClick={() => setSelectedProduct(product)}
                       className="rounded-md bg-blue-500 p-2 text-white"
                     >
                       <FiEdit size={16} />
-                    </button>
+                    </button> */}
 
                     {/* DELETE */}
                     <button
