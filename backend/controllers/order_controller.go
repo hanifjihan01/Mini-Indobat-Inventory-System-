@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"obat_crud/services"
 
@@ -42,4 +43,28 @@ func (h *OrderController) CreateOrder(c *gin.Context) {
 		"message":     "Order success",
 		"total_price": total,
 	})
+}
+
+// controllers/order_controller.go
+func (h *OrderController) GetRecentOrders(c *gin.Context) {
+	orders, err := h.service.GetRecentOrders() // ambil 5 terbaru
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var response []gin.H
+	for _, o := range orders {
+		response = append(response, gin.H{
+			"order_code":  "ORD" + fmt.Sprintf("%03d", o.ID),
+			"product":     o.Product.Name,
+			"status":      o.Status,
+			"tanggal":     o.CreatedAt.Format("02 Jan 2006"),
+			"total_price": o.TotalPrice,
+		})
+	}
+
+	c.JSON(http.StatusOK, response)
 }

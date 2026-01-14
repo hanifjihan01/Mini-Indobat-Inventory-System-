@@ -50,4 +50,7 @@ func SetupRoutes(r *gin.Engine) {
 
 	// ORDERS
 	r.POST("/orders", orderController.CreateOrder)
+	// routes.go
+	r.GET("/orders/recent", orderController.GetRecentOrders)
+
 }

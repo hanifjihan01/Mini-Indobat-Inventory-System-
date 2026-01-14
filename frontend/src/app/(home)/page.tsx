@@ -11,6 +11,7 @@ import DashboardActions from "@/DashboardAction";
 import { OverviewCardsGroup } from "./_components/overview-cards";
 import { OverviewCardsSkeleton } from "./_components/overview-cards/skeleton";
 import DashboardActions2 from "@/DashboardAction2";
+import RecentOrdersTable from "@/components/Tables/recents-order/recents-order-table";
 
 
 type PropsType = {
@@ -46,24 +47,33 @@ export default async function Home({ searchParams }: PropsType) {
       </Suspense>
 
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-9 2xl:gap-7.5">
-        <PaymentsOverview
-          className="col-span-12 xl:col-span-7"
-          key={extractTimeFrame("payments_overview")}
-          timeFrame={extractTimeFrame("payments_overview")?.split(":")[1]}
-        />
+  {/* BARIS 1 */}
+  <PaymentsOverview
+    className="col-span-12 xl:col-span-7"
+    key={extractTimeFrame("payments_overview")}
+    timeFrame={extractTimeFrame("payments_overview")?.split(":")[1]}
+  />
 
-        <WeeksProfit
-          key={extractTimeFrame("weeks_profit")}
-          timeFrame={extractTimeFrame("weeks_profit")?.split(":")[1]}
-          className="col-span-12 xl:col-span-5"
-        />
+  <WeeksProfit
+    key={extractTimeFrame("weeks_profit")}
+    timeFrame={extractTimeFrame("weeks_profit")?.split(":")[1]}
+    className="col-span-12 xl:col-span-5"
+  />
 
-        <div className="col-span-12 grid xl:col-span-8">
-          <Suspense fallback={<TopChannelsSkeleton />}>
-            <TopChannels />
-          </Suspense>
-        </div>
-      </div>
+  {/* BARIS 2 */}
+{/* BARIS 2 */}
+<div className="col-span-12 xl:col-span-7 flex">
+  <Suspense fallback={<TopChannelsSkeleton />}>
+    <TopChannels className="h-full w-full" />
+  </Suspense>
+</div>
+
+<div className="col-span-12 xl:col-span-5 flex">
+  <RecentOrdersTable className="h-full w-full" />
+</div>
+
+</div>
+
     </>
   );
 }

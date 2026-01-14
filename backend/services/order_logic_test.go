@@ -29,6 +29,9 @@ type simpleMockOrderRepo struct{}
 
 func (m *simpleMockOrderRepo) Create(tx *gorm.DB, order *models.Order) error { return nil }
 func (m *simpleMockProductRepo) Delete(tx *gorm.DB, id uint) error           { return nil }
+func (m *simpleMockOrderRepo) FindRecent() ([]models.Order, error) {
+	return []models.Order{}, nil
+}
 
 // ===== TEST LOGIC HITUNG =====
 

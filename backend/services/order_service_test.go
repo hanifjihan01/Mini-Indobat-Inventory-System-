@@ -43,6 +43,9 @@ type mockOrderRepo struct {
 func (m *mockOrderRepo) Create(tx *gorm.DB, order *models.Order) error {
 	return m.err
 }
+func (m *mockOrderRepo) FindRecent() ([]models.Order, error) {
+	return []models.Order{}, nil
+}
 
 func (m *mockProductRepo) Delete(tx *gorm.DB, id uint) error {
 	// cukup return nil karena ini mock, tidak perlu hapus apa-apa

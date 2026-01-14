@@ -10,6 +10,7 @@ import (
 
 type OrderService interface {
 	CreateOrder(productID uint, qty int, discount int) (float64, error)
+	GetRecentOrders() ([]models.Order, error)
 }
 
 type orderService struct {
@@ -84,3 +85,11 @@ func (s *orderService) CreateOrder(productID uint, qty int, discount int) (float
 
 	return finalPrice, nil
 }
+
+// services/order_service.go
+
+func (s *orderService) GetRecentOrders() ([]models.Order, error) {
+	return s.orderRepo.FindRecent()
+}
+
+// services/order_service.go

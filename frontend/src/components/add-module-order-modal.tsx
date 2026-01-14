@@ -82,6 +82,8 @@ export default function AddOrderModal({
 
       onSuccess("Order berhasil ditambahkan!");
       window.dispatchEvent(new Event("products-updated"));
+      
+window.dispatchEvent(new Event("orders-updated"));
       router.refresh();
       onClose();
       setQuantity(1);

@@ -10,12 +10,12 @@ export const NAV_DATA = [
         url: "/",
         items: [], // <-- tambahkan ini
       },
-      {
-        title: "Charts",
-        icon: Icons.PieChart,
-        url: "/charts/basic-chart",
-        items: [], // <-- tambahkan ini
-      },
+      // {
+      //   title: "Charts",
+      //   icon: Icons.PieChart,
+      //   url: "/charts/basic-chart",
+      //   items: [], // <-- tambahkan ini
+      // },
     ],
   },
 

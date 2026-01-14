@@ -8,6 +8,7 @@ import (
 
 type OrderRepository interface {
 	Create(tx *gorm.DB, order *models.Order) error
+	FindRecent() ([]models.Order, error)
 }
 
 type orderRepository struct {
@@ -20,4 +21,15 @@ func NewOrderRepository(db *gorm.DB) OrderRepository {
 
 func (r *orderRepository) Create(tx *gorm.DB, order *models.Order) error {
 	return tx.Create(order).Error
+}
+
+func (r *orderRepository) FindRecent() ([]models.Order, error) {
+	var orders []models.Order
+
+	err := r.db.
+		Preload("Product").
+		Order("created_at DESC").
+		Find(&orders).Error
+
+	return orders, err
 }

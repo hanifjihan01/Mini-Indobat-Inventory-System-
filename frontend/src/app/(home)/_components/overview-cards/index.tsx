@@ -12,13 +12,13 @@ export async function OverviewCardsGroup() {
       <OverviewCard
         label="Total Harga"
         data={{ value: formatRupiah(views.value) }}
-        Icon={icons.Views}
+        Icon={icons.Profit}
       />
 
       <OverviewCard
         label="Total Stock"
         data={profit}
-        Icon={icons.Profit}
+        Icon={icons.Views}
       />
       <OverviewCard
         label="Total Products"
