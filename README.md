@@ -20,7 +20,7 @@ Test race condition:
 masuk folder obat_crud lalu ke backend dengan `cd backend`, jalankan perintah `hey -o csv -n 10 -c 10 -m POST -H "Content-Type: application/json" -d '{"product_id":3,"quantity":1,"discount_percent":0}' http://localhost:8080/orders` untuk mengirim 10 request secara bersamaan  
 
 Konfigurasi database: 
-buat file `.env` di folder backend dengan isi DB_HOST=localhost, DB_PORT=5432, DB_USER=postgres, DB_PASSWORD=narzia123, DB_NAME=db_obat, DB_SSLMODE=disable  
+buat file `.env` di folder backend dengan isi DB_HOST=localhost, DB_PORT=5432, DB_USER=postgres, DB_PASSWORD=apaaj, DB_NAME=db_obat, DB_SSLMODE=disable  
 
 Catatan: pastikan PostgreSQL sudah berjalan sebelum menjalankan backend. Gunakan port default: backend 8080, frontend 3000. Gunakan tool [hey](https://github.com/rakyll/hey) untuk testing race condition.
 
